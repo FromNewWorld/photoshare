@@ -17,7 +17,8 @@ class Application(tornado.web.Application):
         ]
         settings = dict(
             debug='True',
-            template_path='templates'
+            template_path='templates',
+            static_path='static',
         )
 
         super(Application,self).__init__(handlers,**settings)

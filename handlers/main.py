@@ -4,7 +4,7 @@ class IndexHandler(tornado.web.RequestHandler):
     '''
     Home page
     '''
-    def get(self):
+    def get(self,*args,**kwargs):
         # self.write('ok')
         self.render('index.html')
 
@@ -12,7 +12,7 @@ class ExploreHandler(tornado.web.RequestHandler):
     '''
     Explore page
     '''
-    def get(self):
+    def get(self,*args,**kwargs):
         self.render('explore.html')
 
 class PostHandler(tornado.web.RequestHandler):

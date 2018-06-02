@@ -2,7 +2,7 @@
 
 {% block title %} post page {% end %}
 {% block content %}
-post {{ post_id }} content
+        <img src="{{ static_url('images/{}.jpg'.format(post_id) ) }}" height="400px" width="400px">
 {% end %}
 
 
