@@ -11,7 +11,9 @@ class IndexHandler(tornado.web.RequestHandler):
     '''
     def get(self,*args,**kwargs):
         images_path = os.path.join(self.settings.get('static_path'),'uploads')  #图片的路径--static_path+upload（statci_path路径在Application里定义）
+        print(images_path)
         images = photo.get_imges(images_path)                                   #一个jpg图片路径的列表
+        print(images)
         self.render('index.html',images = images)
 
 
@@ -51,7 +53,4 @@ class UploadHandler(tornado.web.RequestHandler):
                 f1.write(img_file['body'])
             self.write({'got file': img_file['filename']})
 
-            with open('./static/uploads/thumbnails_200x200/' + img_file['filename'], 'wb') as f:        #上传图片到uploads/thumbnails_200x200/目录下
-                f.write(img_file['body'])
-
-            photo.make_thumbnail('./static/uploads/thumbnails_200x200/{}'.format(img_file['filename']))       #生成上传图片的缩略图
+            photo.make_thumbnail('./static/uploads/'+img_file['filename'])          #生成上传图片的缩略图
