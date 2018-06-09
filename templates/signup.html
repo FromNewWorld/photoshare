@@ -2,6 +2,10 @@
 
 {% block title %} upload page {% end %}
 {% block content %}
+    {% if msg %}
+        <p>{{ msg }}</p>
+    {% end %}
+
     <form action="/signup" enctype="multipart/form-data" method="post">
         Username:
         <input type="text" name="username" id="id_username">
@@ -13,7 +17,8 @@
         <input type="password" name="password2" id="id_password2">
         <br>
         Email:
-        <input type="text" name="email" id="id_email">
+        <input type="email" name="email" id="id_email">
+        <br>
         <button>注册</button>
         <br>
         已有账号？马上<a href="/login">登入</a>！
