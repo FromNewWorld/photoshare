@@ -1,41 +1,49 @@
 import tornado.web
 import os
+from pycket.session import SessionMixin
 
+from utils import photo,account
 
+class AuthBaseHandler(tornado.web.RequestHandler,SessionMixin):
+    def get_current_user(self):
+        return self.session.get('user_info')
 
-from utils import photo
-
-class IndexHandler(tornado.web.RequestHandler):
+class IndexHandler(AuthBaseHandler):
     '''
     Home page
     '''
+    @tornado.web.authenticated
     def get(self,*args,**kwargs):
         images_path = os.path.join(self.settings.get('static_path'),'uploads')  #图片的路径--static_path+upload（statci_path路径在Application里定义）
-        print(images_path)
         images = photo.get_imges(images_path)                                   #一个jpg图片路径的列表
-        print(images)
         self.render('index.html',images = images)
 
 
-class ExploreHandler(tornado.web.RequestHandler):
+class ExploreHandler(AuthBaseHandler):
     '''
     Explore page
     '''
+
+    @tornado.web.authenticated
     def get(self,*args,**kwargs):
         thumb = photo.get_thumbimges('./static/uploads/thumbnails_200x200')       #一个缩略图图片路径的列表
+        nextname = self.get_argument('next','')
+        print(nextname)
         self.render('explore.html',
                     thumb=thumb,
+                    next=nextname,
                     )
 
 class PostHandler(tornado.web.RequestHandler):
     '''
     Post page
     '''
+
+    # @tornado.web.authenticated
     def get(self,*args,**kwargs):
-        print(args)
-        print(kwargs)
         self.render('post.html',
-                    post_id=kwargs['post_id']
+                    post_id=kwargs['post_id'],
+
                     )
 
 

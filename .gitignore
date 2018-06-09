@@ -1,3 +1,7 @@
 .idea
 
 static/uploads
+
+alembic.ini
+
+alembic

@@ -1,0 +1,22 @@
+{% extends 'Base.html' %}
+
+{% block title %} upload page {% end %}
+{% block content %}
+    <form action="/signup" enctype="multipart/form-data" method="post">
+        Username:
+        <input type="text" name="username" id="id_username">
+        <br>
+        Password1:
+        <input type="password" name="password1" id="id_password1">
+        <br>
+        Password2:
+        <input type="password" name="password2" id="id_password2">
+        <br>
+        Email:
+        <input type="text" name="email" id="id_email">
+        <button>注册</button>
+        <br>
+        已有账号？马上<a href="/login">登入</a>！
+    </form>
+
+{% end %}
