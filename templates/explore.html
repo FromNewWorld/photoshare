@@ -3,7 +3,7 @@
 {% block title %} explore page {% end %}
 {% block content %}
     {% for img in thumb %}
-            <img src="{{ img }}">
+            <img src="{{ static_url(img) }}">
     {% end %}
 {% end %}
 

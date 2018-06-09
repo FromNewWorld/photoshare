@@ -1,5 +1,5 @@
 import hashlib
-from models.account import User
+from models.account import User,session,Post
 
 def hash_it(password):          #进行hash，返回hash后的值
     return hashlib.md5(password.encode('utf8')).hexdigest()
@@ -38,5 +38,22 @@ def register(name,password,email):
     User.add_user(name,pw,email)
     return 'ok'
 
+def add_post_for(username , image_url,thumb_url):
+    '''
+    保存特定用户的图片
+    :param username:用户名
+    :param image_url:上传图片的保存地址（static下的）
+    :param thumb_url:缩略图的保存地址（static下的）
+    :return:
+    '''
+    user = session.query(User).filter_by(name=username).first()
+    post =Post(image_url=image_url,thumb_url=thumb_url,user=user)
+    session.add(post)
+    session.commit()
+    return post.id
 
+def get_post_for(username):
+    user = session.query(User).filter_by(name=username).first()
+    posts = session.query(Post).filter_by(user=user)
+    return posts
 

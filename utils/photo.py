@@ -11,11 +11,15 @@ def get_imges(path):
     return images
 
 def make_thumbnail(path):                                    #在路径下生成缩略图
-
+    dirname = os.path.dirname(path)
+    print('dirname:'+dirname)
     file, ext = os.path.splitext(os.path.basename(path))                      #将传入的路径分开，分为路径以及后缀（.jpg）
     im = Image.open(path)
     im.thumbnail((200, 200))                                #生成200x200的缩略图
-    im.save("./static/uploads/thumbnails_200x200/{}_{}x{}.jpg".format(file, 200, 200), "JPEG")  #保存在相面划分出来的路径下，名字为（）_200x200的jpg图片
+    save_thumb_to= os.path.join(dirname,'thumbnails_200x200','{}_{}x{}.jpg'.format(file, 200, 200))
+    # im.save("./static/uploads/thumbnails_200x200/{}_{}x{}.jpg".format(file, 200, 200), "JPEG")  #保存在相面划分出来的路径下，名字为（）_200x200的jpg图片
+    im.save(save_thumb_to, "JPEG")
+    return save_thumb_to
 
 
 def get_thumbimges(path):

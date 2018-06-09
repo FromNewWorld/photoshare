@@ -1,6 +1,7 @@
-from sqlalchemy import (Column,Integer,String,DateTime)
+from sqlalchemy import (Column,Integer,String,DateTime,ForeignKey)
 from datetime import datetime
 from sqlalchemy.sql import exists
+from sqlalchemy.orm import relationship
 
 from .db import Base,DBSession
 
@@ -47,7 +48,6 @@ class User(Base):
         session.add(user)
         session.commit()
 
-
     def update_last_login(username):
         """
         更新上次登入的时间
@@ -56,9 +56,22 @@ class User(Base):
         session.query(User).filter_by(name=username).update({User.last_login:t})
         session.commit()
 
+    def __repr__(self):
+        return '<User({}:{})>'.format(self.id,self.name)
+
+
+class Post(Base):
+
+    __tablename__ = 'posts'
+    id = Column(Integer,primary_key=True,autoincrement=True)
+    image_url = Column(String(80))                              #原图的地址（用于static_url获取，为upload/*.jpg）
+    thumb_url = Column(String(80))                              #缩略图地址
+
+    user_id = Column(Integer,ForeignKey('users.id'))
+    user = relationship('User',backref='posts',uselist=False,cascade='all')
 
     def __repr__(self):
-        return '< User({}:{}) >'.format(self.id,self.name)
+        return '<Post(#{})>'.format(self.id)
 
 
 if __name__=='__main__':

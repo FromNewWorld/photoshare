@@ -3,7 +3,7 @@
 {% block title %} index page {% end %}
 {% block content %}
     {% for img in images %}
-            <img src="{{ img }}" height="300px" width="300px">
+            <img src="{{ static_url(img) }}" height="300px" width="300px">
     {% end %}
 {% end %}
 
