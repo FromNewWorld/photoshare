@@ -21,10 +21,9 @@ class LoginHandler(AuthBaseHandler):
     def post(self, *args, **kwargs):
         username = self.get_argument('username',None)   #获取账号密码
         password = self.get_argument('password',None)
-        # if User.exists_it(username):                    #该用户是否存在
         passed = authenticate(username,password)    #存在：验证身份
         if passed:                                  #如果身份验证成功
-            self.session.set('user_info',username)  #set一个session
+            self.session.set('user_info',username)  #set一个session，内容为username
             User.update_last_login(username)
             next = self.get_argument('next', '/')   #获取下next参数
             self.redirect(next)                     #跳转到next
@@ -37,7 +36,8 @@ class LogoutHandler(AuthBaseHandler):
     登出
     '''
     def get(self):
-        self.session.set('user_info','')            #set session为空
+        # self.session.set('user_info','')            #set session为空
+        self.session.delete('user_info')
         self.redirect('/login')                     #跳转/login页面
 
 
@@ -53,10 +53,10 @@ class SignupHandler(AuthBaseHandler):
         password1 = self.get_argument('password1',None)
         password2 = self.get_argument('password2',None)
         email = self.get_argument('email',None)
-        if username and password1 and password2:            #如果username，password1，password2不为空
-            if password1 != password2:                      #而且password1，password2不相等
+        if username and password1 and password2:
+            if password1 != password2:
                 self.write('两次密码不同')
-            else:                                           #相等
+            else:
                 ret=register(username,password1,email)      #进行注册
                 if ret =='ok':                              #如果注册返回值为‘ok’
                     self.session.set('user_info',username)  #进行登入以及跳转

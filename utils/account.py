@@ -4,12 +4,6 @@ from models.account import User,session,Post
 def hash_it(password):          #进行hash，返回hash后的值
     return hashlib.md5(password.encode('utf8')).hexdigest()
 
-# USER_DATA={
-#     'name':'abc',
-#     'password':hash_it('1')
-# }
-
-
 def authenticate(username,password):
     '''
     进行身份验证

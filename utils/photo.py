@@ -2,29 +2,41 @@ import glob
 import os
 from PIL import Image
 
+class ImageSave(object):
+    upload_dir = 'uploads'
+    thumb_dir = 'thumbnails_200x200'
+    size = (200,200)
 
-def get_imges(path):
-    images = glob.glob(path + '/*.jpg')
-    # images=[]
-    # for file in glob.glob(path + '/[0-9].jpg'):         #获取文件的路径，并以列表输出（此处将获取path路径下名字如*.jpg的文件）
-    #     images.append(file)
-    return images
+    def __init__(self,static_path,name):
+        '''
+        记录保存图片的路径
+        :param static_path: app settings static_path (图片保存服务器的路径)
+        :param name: 图片名字
+        '''
+        self.static_path = static_path
+        self.name = name
+    @property
+    def upload_url(self):
+        return os.path.join(self.upload_dir,self.name)   #uploads/*jpg     (用于保存数据库是用的路径)
 
-def make_thumbnail(path):                                    #在路径下生成缩略图
-    dirname = os.path.dirname(path)
-    print('dirname:'+dirname)
-    file, ext = os.path.splitext(os.path.basename(path))                      #将传入的路径分开，分为路径以及后缀（.jpg）
-    im = Image.open(path)
-    im.thumbnail((200, 200))                                #生成200x200的缩略图
-    save_thumb_to= os.path.join(dirname,'thumbnails_200x200','{}_{}x{}.jpg'.format(file, 200, 200))
-    # im.save("./static/uploads/thumbnails_200x200/{}_{}x{}.jpg".format(file, 200, 200), "JPEG")  #保存在相面划分出来的路径下，名字为（）_200x200的jpg图片
-    im.save(save_thumb_to, "JPEG")
-    return save_thumb_to
+    @property
+    def upload_path(self):
+        return os.path.join(self.static_path,self.upload_url)   #static/uploads/*.jpg
+
+    def save_upload(self,content):
+        with open(self.upload_path,'wb') as f:
+            f.write(content)
+
+    @property
+    def thumb_url(self):
+        base, _ = os.path.splitext(self.name)
+        thumb_name = '{}_{}x{}.jpg'.format(base,self.size[0],self.size[1])
+        return os.path.join(self.upload_dir,self.thumb_dir,thumb_name)   #uploads/thumbnails_200x200/{}_{}_{}.jpg
+
+    def make_thumb(self):
+        im = Image.open(self.upload_path)
+        im.thumbnail(self.size)
+        im.save(os.path.join(self.static_path,self.thumb_url),'JPEG')
 
 
-def get_thumbimges(path):
-    thumbimages = glob.glob(path + '/*_200x200.jpg')        #获取path路径下文件名类似为  （ ）_200x200.jpg的图片即缩略图
-    # for file in glob.glob(path + '/*_200x200.jpg'):  # 获取文件的路径，并以列表输出（此处将获取path路径下名字如*.jpg的文件）
-    #     thumbimages.append(file)
-    return thumbimages                                      #返回缩略图列表
 

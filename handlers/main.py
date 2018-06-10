@@ -7,7 +7,10 @@ from utils.account import add_post_for,get_post_for
 
 class AuthBaseHandler(tornado.web.RequestHandler,SessionMixin):
     def get_current_user(self):
-        return self.session.get('user_info')
+        '''
+        :return: 返回用户信息
+        '''
+        return self.session.get('user_info')          #获取user_info，user_info的内容为username（auth中的login里设置的）
 
 class IndexHandler(AuthBaseHandler):
     '''
@@ -17,9 +20,10 @@ class IndexHandler(AuthBaseHandler):
     def get(self,*args,**kwargs):
         # images_path = os.path.join(self.settings.get('static_path'),'uploads')  #图片的路径--static_path+upload（statci_path路径在Application里定义）
         # images = photo.get_imges(images_path)                                   #一个jpg图片路径的列表
-        posts = get_post_for(self.current_user)
+        posts = get_post_for(self.current_user)                 #current_user是get_current_user不为空时，则返回get_current_user
         image_urls =[p.image_url for p in posts]
-        self.render('index.html',images = image_urls)
+        next = self.get_argument('next', '')
+        self.render('index.html',images = image_urls,next=next)
 
 
 class ExploreHandler(AuthBaseHandler):
@@ -32,10 +36,10 @@ class ExploreHandler(AuthBaseHandler):
         posts = get_post_for(self.current_user)
         thumb_urls =[p.thumb_url for p in posts]
 
-        nextname = self.get_argument('next','')
+        next = self.get_argument('next','')
         self.render('explore.html',
                     thumb=thumb_urls,
-                    next=nextname,
+                    next=next,
                     )
 
 class PostHandler(tornado.web.RequestHandler):
@@ -55,19 +59,19 @@ class UploadHandler(AuthBaseHandler):
     '''
     upload to the share of photo
     '''
+    @tornado.web.authenticated
     def get(self, *args, **kwargs):
-        self.render('upload.html')
+        next = self.get_argument('next','')
+        self.render('upload.html',next=next)
 
     def post(self, *args, **kwargs):
         img_files = self.request.files.get('newimg',None)
-        for img_file in img_files:
-            image_url = 'uploads/' + img_file['filename']
-            save_to = os.path.join(self.settings['static_path'],image_url)
+        for img in img_files:
+            saver = photo.ImageSave(self.settings['static_path'],img['filename'])
+            saver.save_upload(img['body'])
+            saver.make_thumb()
 
-            # with open('./static/uploads/'+img_file['filename'],'wb') as f:         #上传图片到./static/uploads/目录下
-            with open(save_to, 'wb') as f:
-                f.write(img_file['body'])
-            self.write({'got file': img_file['filename']})
-            full_path = photo.make_thumbnail(save_to)          #生成上传图片的缩略图
-            thumb_url = os.path.relpath(full_path,self.settings['static_path'])     #缩略图的static下的路径
-            add_post_for(self.current_user ,image_url ,thumb_url )
+            add_post_for(self.current_user ,saver.upload_url ,saver.thumb_url)
+            print('save to {}'.format(saver.upload_path))
+
+        self.render('upload.html')
