@@ -65,7 +65,7 @@ class UploadHandler(AuthBaseHandler):
         self.render('upload.html',next=next)
 
     def post(self, *args, **kwargs):
-        img_files = self.request.files.get('newimg',None)
+        img_files = self.request.files.get('newing',None)
         for img in img_files:
             saver = photo.ImageSave(self.settings['static_path'],img['filename'])
             saver.save_upload(img['body'])

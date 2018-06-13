@@ -3,7 +3,10 @@
 {% block title %} index page {% end %}
 {% block content %}
     {% for img in images %}
-            <img src="{{ static_url(img) }}" height="300px" width="300px">
+<figure class="figure">
+  <img src="{{ static_url(img) }}" class="figure-img img-fluid rounded" height="400px" width="400px">
+  <figcaption class="figure-caption">upload by User</figcaption>
+</figure>
     {% end %}
 {% end %}
 
